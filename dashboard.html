@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Panel de Control - StayTrack</title>
+    <link rel="stylesheet" href="style.css/dashboard.css" />
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Hotel Resort de Kaley - Panel de Control</h1>
+        </header>
+        <!--declaramos sidebar como el objeto de nuestro menu -->
+        <aside class="sidebar">
+            <div class="menu-group">
+                <button onclick="toggleSubmenu()">Gestionar Reservas</button>
+                <div id="submenuReservas" class="submenu hidden">
+                    <button onclick="location.href='reservas.html?vista=crear'">Crear Reserva</button>
+                    <button onclick="location.href='reservas.html?vista=todas'">Todas las Reservas</button>
+                </div>
+            </div>
+            
+            <button onclick="location.href='facturas.html'">Gestión de Facturas</button>
+            <button onclick="location.href='inventario.html'">Gestionar Inventario</button>
+            <button onclick="location.href='configuracion.html'">Configuración</button>
+        </aside>
+    <div  class="habitaciones"></div>
+    </div>
+
+    <!-- Aquí ponemos el registro del huesped en las habitaciones pero lo dejamos oculto para cuando lo necesitemos -->
+    <div id="modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Registrar Huésped</h3>
+            <input type="text" id="cedulaHuesped" placeholder="No. Cedula">
+            <input type="text" id="nombreHuesped" placeholder="Nombre">
+            <input type="text" id="apellidoHuesped" placeholder="Apellido">
+            <input type="tel" id="telefonoHuesped" placeholder="Telefono">
+            <input type="text" id="ciudadHuesped" placeholder="Ciudad">
+            <input type="text" id="correoHuesped" placeholder="Correo">
+            <input type="number" id="valorNoche" placeholder="Valor Noche">
+            <button onclick="registrarHuesped()">Registrar</button>
+            <button onclick="cerrarModal()">Cancelar</button>
+        </div>    
+    </div>
+    <div id="infoHuesped" class="modal hidden">
+        <div class="modal-content">
+            <h3>Información del Huesped</h3>
+            <div id="datosHuesped"></div>
+            <button onclick="agregarNoche()">Agregar Noche</button>
+            <button onclick="agregarProducto()">Agregar Producto</button>
+            <button onclick="cerrarInfo()">Cerrar</button>
+            <button onclick="imprimirFactura()">Imprimir Factura</button>
+            <button onclick="checkOut()">Check Out</button>
+
+        </div>
+        </div>
+    </div>
+    <script src="script.js/dashboard.js"></script>
+</body>
+</html>

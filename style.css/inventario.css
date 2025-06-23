@@ -1,0 +1,114 @@
+body{
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+}
+
+.header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: orange;
+    color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    z-index: 1;
+}
+
+.inventario-container{
+    margin-top: 80px;
+    padding: 20px;
+    max-width: 1000px;
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    background: rgb(224, 216, 216);
+}
+
+.formulario-producto{
+    margin-bottom: 30px;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+}
+
+.formulario-producto input{
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.formulario-producto button{
+    padding: 10px;
+    background-color: orange;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.formulario-producto button:hover{
+    background-color: darkorange;
+}
+
+.tabla-inventarrio table{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+
+.tabla-inventario th,
+.tabla-inventario td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+
+.tabla-inventario th {
+    background-color: #eee;
+}
+
+.tabla-inventario button {
+    padding: 5px 10px;
+    font-size: 13px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.tabla-inventario button:hover {
+    background-color: #d32f2f;
+}
+
+.botones-finales {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.botones-finales button {
+    padding: 10px 20px;
+    background-color: orange;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.botones-finales button:hover {
+    background-color: darkorange;
+}

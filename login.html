@@ -17,12 +17,13 @@
         <div class="form-box">
             <h2>Iniciar Sesión</h2>
         <!--se crea la variable y los contenedores de las entradas definiendo el tipo de cada una-->
-                <form id="loginForm">
-                    <label for="usuario">Usuario:</label>
-                    <input type="text"  id="usuario" required />
-                    <label for="contrasena">Contraseña:</label>
+                
+                <form id="formLogin">
+                    <input type="text" id="hotel" name="hotel" placeholder="Código o nombre del hotel" required>
+                    <input type="text"  id="usuario" name="usuario" required >
                     <input type="password"
-                    id="contrasena" required />
+                    id="contrasena"
+                    name="contraseña" required />
                     <!-- se crea el boton de ingresar-->
                     <button class="btn-login">Ingresar</button>
                     <!--configuración mensaje de error al fallo al ingreso de datos-->
@@ -31,6 +32,6 @@
             </div>
         </div>
 
-    <script src="script.js/script.js"></script>
+    <script src="script.js/script.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login StayTrack</title>
+    <link rel="stylesheet" href="style/style.css">
+</head> 
+<body>
+    <!-- se crea el login de la pagina-->
+    <div class="container-login">
+        <div class="logo-box">
+            <!-- Insertamos la imagen-->
+            <img src="assets/logo-staytrack-pie.jpg" alt="Logo StayTrack" class="logo-img" />
+            <p class="slogan">Gestiona y Hospeda Fácilmente</p>
+        </div>
+        <div class="form-box">
+            <h2>Iniciar Sesión</h2>
+        <!--se crea la variable y los contenedores de las entradas definiendo el tipo de cada una-->
+                
+        <form id="formLogin">
+            <label for="hotel">Hotel:</label>
+            <input type="text" id="hotel" name="hotel" placeholder="Código o nombre del hotel" required>
+            <label for="usuario">Usuario:</label>
+            <input type="text" id="usuario" name="usuario" required />
+            <label for="contrasena">Contraseña:</label>
+            <input type="password" id="contrasena" name="contrasena" required />
+            <button class="btn-login">Ingresar</button>
+            <p id="mensajeError" class="error"></p>
+        </form>    
+        </div>
+    </div>
+
+    <script src="script/script.js" defer></script>
+</body>
+</html>

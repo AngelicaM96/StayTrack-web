@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Gestión de Reservas - StayTrack</title>
+    <link rel="stylesheet" href="style/reservas.css" />
+</head>
+<body>
+    <header class="header">
+        <h1>Hotel Resort de Kaley - Reservas</h1>
+    </header>
+
+    <div class="contenedor-reserva">
+        <div id="formularioReserva" class="hidden">
+            <h3>Crear Reserva</h3>
+            <input type="text" id="idReserva" placeholder="No. Reserva" />
+            <input type="datetime-local" id="checkin" />
+            <input type="datetime-local" id="checkout" />
+            <input type="text" id="idClienteReserva" placeholder="No. Cédula" />
+            <input type="text" id="nombreReserva" placeholder="Nombre" />
+            <input type="text" id="apellidoReserva" placeholder="Apellido" />
+            <input type="text" id="telefonoReserva" placeholder="Teléfono" />
+            <input type="text" id="ciudadReserva" placeholder="Ciudad" />
+            <input type="text" id="correoReserva" placeholder="Correo" />
+            <input type="text" id="idHabitacionReserva" placeholder="Habitación" />
+            <input type="text" id="valorNocheReserva" placeholder="Valor por Noche" />
+            <button onclick="crearReserva()">Ingresar</button>
+        </div>
+
+        <!-- Lista de todas las reservas -->
+        <div id="listaReservas" class="lista-reservas hidden">
+            <h3>Todas las Reservas</h3>
+            <div id="contenedorReservas"></div>
+        </div>
+
+        <!-- Botón de regreso -->
+        <div style="margin-top: 20px;">
+        <button onclick="location.href='dashboard.html'">Salir</button>
+        </div>
+        <script src="script/reservas.js" defer></script>
+    </div>
+</body>
+
+</html>

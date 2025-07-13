@@ -45,7 +45,7 @@ function agregarProducto() {
 
     const indexExistente = inventario.findIndex(p => p.codigo === codigo);
 
-    //Condicionamos si el producto ya existe modificarle el valor y las cantidades
+    //Condicionamos si el producto ya existe modificamos el valor y las cantidades
 
     if (indexExistente !== -1) {
         inventario[indexExistente].cantidad += cantidad;

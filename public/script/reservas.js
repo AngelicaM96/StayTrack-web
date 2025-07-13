@@ -3,151 +3,133 @@ const formularioReserva = document.querySelector("#formularioReserva");
 const listaReservas = document.querySelector("#listaReservas");
 const contenedorReservas = document.getElementById("contenedorReservas");
 
-// llamamos a el URL
 window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const vista = params.get('vista');
 
-    // en esta parte vamos a mostrar el contenedor de las reservas
-    //vistaReservas.classList.remove('hidden'); 
-
-    const formulario=document.getElementById('formularioReserva');
-    const lista = document.getElementById('listaReservas');
-
     if (vista === 'todas') {
-        formulario.classList.add('hidden');
-        lista.classList.remove('hidden');
+        formularioReserva.classList.add('hidden');
+        listaReservas.classList.remove('hidden');
         renderizarReservas();
     } else {
-        formulario.classList.remove('hidden');
-        lista.classList.add('hidden');
+        formularioReserva.classList.remove('hidden');
+        listaReservas.classList.add('hidden');
     }
 });
 
-let reservas = JSON.parse(localStorage.getItem('reservas')) || [];
-
-
-// En esta función vamos a crear las reservas 
-function crearReserva() {
-    const idReserva = document.getElementById('idReserva').value.trim();
-    const nombreReserva = document.getElementById('nombreReserva').value.trim();
-    const apellidoReserva = document.getElementById('apellidoReserva').value.trim();
-    const telefonoReserva = document.getElementById('telefonoReserva').value.trim();
-    const ciudadReserva = document.getElementById('ciudadReserva').value.trim();
-    const correoReserva = document.getElementById('correoReserva').value.trim();
-    const valorNocheReserva = document.getElementById('valorNocheReserva').value.trim();
-    const checkin = document.getElementById('checkin').value.trim();
-    const checkout = document.getElementById('checkout').value.trim();
-    const idClienteReserva = document.getElementById('idClienteReserva').value.trim();
-    const idHabitacionReserva = document.getElementById('idHabitacionReserva').value.trim();
-
-    if (!idReserva || !checkin || !checkout || !idClienteReserva || !idHabitacionReserva || !nombreReserva || !apellidoReserva || !telefonoReserva || !ciudadReserva || !correoReserva) {
-        alert('Por favor, llene todos los campos...');
-        return;
-    }
-
-    const reserva = {
-        idReserva,
-        nombreReserva,
-        apellidoReserva,
-        telefonoReserva,
-        ciudadReserva,
-        correoReserva,
-        valorNocheReserva,
-        checkin,
-        checkout,
-        idClienteReserva,
-        idHabitacionReserva,
+async function crearReserva() {
+    const datos = {
+        checkIn_reservas: document.getElementById('checkin').value,
+        checkOut_reservas: document.getElementById('checkout').value,
+        cedula_reserva: document.getElementById('idClienteReserva').value,
+        nombre_reserva: document.getElementById('nombreReserva').value,
+        apellido_reserva: document.getElementById('apellidoReserva').value,
+        telefono_reserva: document.getElementById('telefonoReserva').value,
+        ciudad_reserva: document.getElementById('ciudadReserva').value,
+        correo_reserva: document.getElementById('correoReserva').value,
+        Id_habitacion: document.getElementById('idHabitacionReserva').value,
+        Id_hotel: 1,
         estado: 'pendiente'
     };
 
-    reservas.push(reserva);
-    localStorage.setItem("reservas", JSON.stringify(reservas));
-    alert("Reserva creada con éxito");
-
-    // Aquí cambiamos la vista a todas las reservas creadas
-    window.location.href = "reservas.html?vista=todas";
-}
-
-// Renderizamos las reservas que se van a crear 
-function renderizarReservas() {
-    const contenedor = document.getElementById('contenedorReservas');
-    contenedor.innerHTML = '';
-
-    reservas.forEach((reserva, index) => {
-        const div = document.createElement('div');
-        div.classList.add('reserva-tarjeta');
-        
-        div.innerHTML = `
-            <p><strong>Habitación:</strong> ${reserva.idHabitacionReserva}</p>
-            <p><strong>Nombre:</strong> ${reserva.nombreReserva}</p>
-            <p><strong>Apellido:</strong> ${reserva.apellidoReserva}</p>
-            <p><strong>Teléfono:</strong> ${reserva.telefonoReserva}</p>
-            <p><strong>Ciudad:</strong> ${reserva.ciudadReserva}</p>
-            <p><strong>Correo:</strong> ${reserva.correoReserva}</p>
-            <p><strong>Check In:</strong> ${reserva.checkin}</p>
-            <p><strong>Check Out:</strong> ${reserva.checkout}</p>
-            <p><strong>Cliente:</strong> ${reserva.idClienteReserva}</p>
-            <p><strong>Valor por Noche:</strong> ${reserva.valorNocheReserva}</p>
-            <p><strong>Estado:</strong> ${reserva.estado}</p>
-            <div style="margin-top: 10px;">
-                <button onclick="marcarEfectiva(${index})" style="margin-right: 10px;">Reserva Efectiva</button>
-                <button onclick="cancelarReserva(${index})">Cancelar</button>
-            </div>
-        `;
-
-        contenedor.appendChild(div);
-    });
-}
-
-
-// Aquí si marcamos la reserva efectiva para ese día, pasa directamente a el panel de control como ocupada 
-function marcarEfectiva(index) {
-    const reserva = reservas[index];
-    const habitaciones = JSON.parse(localStorage.getItem("habitaciones")) || [];
-
-    const hab = habitaciones.find(h => h.id.toString() === reserva.idHabitacionReserva.toString());
-
-    if (!hab) {
-        alert("Habitación no se encontró");
-        return;
+    
+    for (const key in datos) {
+        if (!datos[key]) {
+            alert("Todos los campos son obligatorios.");
+            return;
+        }
     }
 
-    if (hab.estado !== "disponible") {
-        alert("La habitación no está disponible");
-        return;
-    }
+    try {
+        const res = await fetch('/api/reservas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(datos)
+        });
 
-    hab.estado = "ocupada";
-    hab.huesped = {
-        cedula: reserva.idClienteReserva,
-        nombre: reserva.nombreReserva,
-        apellido: reserva.apellidoReserva,
-        telefono: reserva.telefonoReserva,
-        ciudad: reserva.ciudadReserva,
-        correo: reserva.correoReserva,
-        valorNoche: reserva.valorNocheReserva
-    };
-    hab.noches = 1;
-    hab.productos = [];
+        const result = await res.json();
 
-    reservas.splice(index, 1);
-
-    localStorage.setItem("habitaciones", JSON.stringify(habitaciones));
-    localStorage.setItem("reservas", JSON.stringify(reservas));
-
-    alert("Reserva agregada con éxito.");
-    window.location.href = "dashboard.html";
-}
-
-// Con esta función atraves de un mensaje de confirmación podremos cancelar una reserva 
-function cancelarReserva(index) {
-    if (confirm("¿Está seguro que desea cancelar la reserva?")) {
-        reservas.splice(index, 1);
-        localStorage.setItem("reservas", JSON.stringify(reservas));
-        renderizarReservas();
+        if (res.ok) {
+            alert("Reserva creada con éxito");
+            window.location.href = "reservas.html?vista=todas";
+        } else {
+            alert("Error al crear reserva: " + result.error);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Error de conexión con el servidor");
     }
 }
 
+async function renderizarReservas() {
+    try {
+        const res = await fetch('/api/reservas');
+        const reservas = await res.json();
 
+        contenedorReservas.innerHTML = '';
 
+        reservas.forEach(reserva => {
+            const div = document.createElement('div');
+            div.classList.add('reserva-tarjeta');
+            div.innerHTML = `
+                <p><strong>Habitación:</strong> ${reserva.Id_habitacion}</p>
+                <p><strong>Nombre:</strong> ${reserva.nombre_reserva}</p>
+                <p><strong>Apellido:</strong> ${reserva.apellido_reserva}</p>
+                <p><strong>Teléfono:</strong> ${reserva.telefono_reserva}</p>
+                <p><strong>Ciudad:</strong> ${reserva.ciudad_reserva}</p>
+                <p><strong>Correo:</strong> ${reserva.correo_reserva}</p>
+                <p><strong>Check In:</strong> ${reserva.checkIn_reservas}</p>
+                <p><strong>Check Out:</strong> ${reserva.checkOut_reservas}</p>
+                <p><strong>Cliente:</strong> ${reserva.cedula_reserva}</p>
+                <p><strong>Estado:</strong> ${reserva.estado}</p>
+                <div style="margin-top: 10px;">
+                    <button onclick="marcarEfectiva(${reserva.Id_reservas})">Reserva Efectiva</button>
+                    <button onclick="cancelarReserva(${reserva.Id_reservas})">Cancelar</button>
+                </div>
+            `;
+            contenedorReservas.appendChild(div);
+        });
+    } catch (error) {
+        console.error("Error al cargar reservas:", error);
+    }
+}
+
+async function marcarEfectiva(id) {
+    try {
+        const res = await fetch(`/api/reservas/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (res.ok) {
+            alert('Reserva marcada como efectiva');
+            
+            window.location.href = 'dashboard.html';
+        } else {
+            const result = await res.json();
+            alert('Error: ' + result.error);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
+async function cancelarReserva(id) {
+    if (!confirm("¿Está seguro que desea cancelar la reserva?")) return;
+
+    try {
+        const res = await fetch(`/api/reservas/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (res.ok) {
+            alert('Reserva cancelada');
+            renderizarReservas();
+        } else {
+            const result = await res.json();
+            alert('Error al cancelar: ' + result.error);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}

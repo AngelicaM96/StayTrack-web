@@ -14,35 +14,63 @@ const inputValorNoche = document.getElementById("valorNoche");
 let habitacionSeleccionada = null;
 
 
-
 function renderHabitaciones() {
     habitacionesContainer.innerHTML = "";
-    habitaciones.forEach((hab) => {
-        const div = document.createElement("div");
-        div.className = `habitacion ${hab.estado}`;
-        div.innerHTML = `<h3>Habitación ${hab.id}</h3><p>${hab.estado === 'disponible' ? 'Disponible' : hab.estado === 'Sucia' ? 'Sucia' : hab.estado === 'mantenimiento' ? 'En Mantenimiento' : hab.huesped ? `Ocupada por ${hab.huesped.nombre}`: 'Ocupada'}</p>`;
 
+    
+    const habitacionesOrdenadas = [...habitaciones].sort((a, b) => a.id - b.id);
+
+    habitacionesOrdenadas.forEach((hab) => {
+        const div = document.createElement("div");
+
+        
+        div.className = `habitacion ${hab.estado}`;  
+        
+        div.innerHTML = `<h3>Habitación ${100 + hab.id}</h3><p>${
+            hab.estado === 'disponible' ? 'Disponible' :
+            hab.estado === 'sucia' ? 'Sucia' :
+            hab.estado === 'mantenimiento' ? 'En Mantenimiento' :
+            hab.huesped ? `Ocupada por ${hab.huesped.nombre}` : 'Ocupada'
+        }</p>`;
+
+        
         div.onclick = () => {
-            habitacionSeleccionada= hab;
+            habitacionSeleccionada = hab;
+
             if (hab.estado === 'disponible') {
                 abrirModal();
-            } else  if(hab.estado === 'ocupada'){
-                mostrarInfo();
-            } else if(hab.estado === 'Sucia'){
-                const confirmar = confirm(`¿Marcar la habitación ${hab.id} como disponible?`);
-                if (confirmar){
-                    hab.estado= 'disponible';
-                    renderHabitaciones();
-                }
-            } else if(hab.estado === 'mantenimiento'){
-                alert(`Habitación ${hab.id} está en mantenimiento. No se puede registrar huésped aún.`);
 
-            }        
+            } else if (hab.estado === 'ocupada') {
+                if (hab.huesped || hab.nombreHuesped) {
+                    mostrarInfo();
+                } else {
+                    alert("Esta habitación está ocupada pero no tiene datos del huésped registrados.");
+                }
+
+            } else if (hab.estado === 'sucia') {
+                const confirmar = confirm(`¿Marcar la habitación ${100 + hab.id} como disponible?`);
+                if (confirmar) {
+                    hab.estado = 'disponible';
+
+                    
+                    fetch(`/api/habitaciones/${hab.id}/estado`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ estado: 1 }) 
+                    }).then(() => {
+                        obtenerHabitaciones(); 
+                    });
+                }
+
+            } else if (hab.estado === 'mantenimiento') {
+                alert(`Habitación ${100 + hab.id} está en mantenimiento. No se puede registrar huésped aún.`);
+            }
         };
 
-    habitacionesContainer.appendChild(div);
+        habitacionesContainer.appendChild(div);
     });
 }
+
 
 function abrirModal() {
     modal.classList.remove("hidden");
@@ -86,26 +114,39 @@ function registrarHuesped() {
     }
 }
 
-function mostrarInfo(){
-    const hab= habitacionSeleccionada;
-    const huesped= hab.huesped;
-    const totalProductos= hab.productos.reduce((acc, p) => acc + (p.valor * p.cantidad), 0);
-    const total= hab.noches * huesped.valorNoche + totalProductos;
+function mostrarInfo() {
+    const hab = habitacionSeleccionada;
+    const huesped = hab.huesped || {
+        cedula: hab.cedula_huesped || hab.cedula,
+        nombre: hab.Nombre_huesped || hab.nombre,
+        apellido: hab.Apellido_huesped || hab.apellido,
+        telefono: hab.Telefono_huesped || hab.telefono,
+        ciudad: hab.Ciudad_huesped || hab.ciudad,
+        correo: hab.Correo_huesped || hab.correo,
+        valorNoche: hab.valor_noche || hab.valorNoche || 0
+    };
+
+    const noches = hab.noches || hab.noches_hospedaje || 1;
+    const productos = hab.productos || [];
+
+    const totalProductos = hab.productos.reduce((acc, p) => acc + (p.valor * p.cantidad), 0);
+    const total = hab.noches * huesped.valorNoche + totalProductos;
 
     datosHuesped.innerHTML = `
-        <p><strong>No. Cedula:</strong> ${huesped.cedula}</p>
+        <p><strong>No. Cédula:</strong> ${huesped.cedula}</p>
         <p><strong>Nombre:</strong> ${huesped.nombre}</p>
         <p><strong>Apellido:</strong> ${huesped.apellido}</p>
         <p><strong>Teléfono:</strong> ${huesped.telefono}</p>
         <p><strong>Ciudad:</strong> ${huesped.ciudad}</p>
         <p><strong>Correo:</strong> ${huesped.correo}</p>
-        <p><strong>Valor Noche:</strong> ${huesped.valorNoche}</p>
-        <p><strong>Noches Hospedado:</strong> ${hab.noches}</p>
-        <p><strong>Productos:</strong> ${hab.productos.map(p=>`${p.nombre} x${p.cantidad} ($${p.valor})`).join(", ") || 'Ninguno'}</p>
-        <p><strong>Total debe:</strong> $${total}</p>`;
+        <p><strong>Valor Noche:</strong> $${huesped.valorNoche}</p>
+        <p><strong>Noches Hospedado:</strong> ${noches}</p>
+        <p><strong>Productos:</strong> ${productos.map(p => `${p.nombre} x${p.cantidad} ($${p.valor})`).join(", ") || 'Ninguno'}</p>
+        <p><strong>Total a Pagar:</strong> $${total}</p>`;
 
     infoModal.classList.remove("hidden");
 }
+
 
 function cerrarInfo(){
     infoModal.classList.add("hidden");
@@ -168,6 +209,33 @@ function imprimirFactura(){
         total: total
 };
 
+
+const facturaGuardar = {
+    Nit_cedula: huesped.cedula,
+    Id_cliente: huesped.cedula,
+    nombre_cliente: `${huesped.nombre} ${huesped.apellido}`,
+    noches: hab.noches,
+    valor_noche: huesped.valorNoche,
+    valor_productos: totalProductos,
+    total_pago: total,
+    Id_habitacion: hab.id,
+    Id_hotel: 1
+};
+
+fetch('/api/facturas', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(facturaGuardar)
+})
+.then(response => response.json())
+.then(data => {
+    console.log('Factura guardada al imprimir:', data);
+})
+.catch(error => {
+    console.error('Error al guardar factura al imprimir:', error);
+});
+
+
 facturas.push(nuevaFactura);
 localStorage.setItem("facturas", JSON.stringify(facturas));
 
@@ -178,25 +246,72 @@ localStorage.setItem("facturas", JSON.stringify(facturas));
 
 }
 
-function checkOut(){
-    if(confirm("¿Confirmar Check Out del huésped?")){
-        habitacionSeleccionada.estado="Sucia";
-        habitacionSeleccionada.huesped= null;
-        habitacionSeleccionada.noches= 0;
-        habitacionSeleccionada.productos= [];
-        cerrarInfo();
-        renderHabitaciones();
+async function checkOut() {
+    if (confirm("¿Confirmar Check Out del huésped?")) {
+        const hab = habitacionSeleccionada;
+        const huesped = hab.huesped;
+
+        
+        const totalProductos = hab.productos.reduce((acc, p) => acc + (p.valor * p.cantidad), 0);
+        const total = hab.noches * huesped.valorNoche + totalProductos;
+
+        
+        const factura = {
+            Nit_cedula: huesped.cedula,
+            Id_cliente: huesped.cedula,
+            nombre_cliente: `${huesped.nombre} ${huesped.apellido}`,
+            noches: hab.noches,
+            valor_noche: huesped.valorNoche,
+            valor_productos: totalProductos,
+            total_pago: total,
+            Id_habitacion: hab.id,
+            Id_hotel: 1 
+        };
+
+        try {
+            const resFactura = await fetch('/api/facturas', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(factura)
+            });
+
+            const data = await resFactura.json();
+            console.log('Factura guardada:', data);
+
+            
+            await fetch(`/api/habitaciones/${hab.id}/estado`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ estado: 3 }) 
+            });
+
+            
+            await fetch(`/api/huespedes/${hab.id}`, {
+                method: 'DELETE'
+            });
+
+            
+            cerrarInfo();
+            await obtenerHabitaciones(); 
+        } catch (error) {
+            console.error('Error durante el check-out:', error);
+        }
     }
 }
 
 
-let habitaciones = JSON.parse(localStorage.getItem('habitaciones')) || Array.from({ length: 32 }, (_, i) => ({
-    id: 101 + i,
-    estado: 'disponible',
-    huesped: null,
-    noches: 0,
-    productos: []
-}));
+
+let habitaciones = [];
+
+async function obtenerHabitaciones() {
+    try {
+        const res = await fetch('/api/habitaciones');
+        habitaciones = await res.json();
+        renderHabitaciones();
+    } catch (error) {
+        console.error('Error al cargar habitaciones desde el servidor:', error);
+    }
+}
 
 
 function toggleSubmenu() {
@@ -205,4 +320,4 @@ function toggleSubmenu() {
 }
 
 
-renderHabitaciones();
+obtenerHabitaciones(); 

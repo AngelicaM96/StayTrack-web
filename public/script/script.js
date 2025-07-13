@@ -1,5 +1,5 @@
 document.querySelector(".btn-login").addEventListener("click", async (e) => {
-    e.preventDefault(); // evita el envío por formulario tradicional
+    e.preventDefault();
 
     const hotel = document.getElementById("hotel").value;
     const usuario = document.getElementById("usuario").value;

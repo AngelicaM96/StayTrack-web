@@ -13,32 +13,28 @@
     <div class="contenedor-reserva">
         <div id="formularioReserva" class="hidden">
             <h3>Crear Reserva</h3>
-            <input type="text" id="idReserva" placeholder="No. Reserva" />
-            <input type="datetime-local" id="checkin" />
-            <input type="datetime-local" id="checkout" />
-            <input type="text" id="idClienteReserva" placeholder="No. Cédula" />
-            <input type="text" id="nombreReserva" placeholder="Nombre" />
-            <input type="text" id="apellidoReserva" placeholder="Apellido" />
-            <input type="text" id="telefonoReserva" placeholder="Teléfono" />
-            <input type="text" id="ciudadReserva" placeholder="Ciudad" />
-            <input type="text" id="correoReserva" placeholder="Correo" />
-            <input type="text" id="idHabitacionReserva" placeholder="Habitación" />
-            <input type="text" id="valorNocheReserva" placeholder="Valor por Noche" />
+            <input type="date" id="checkin" required/>
+            <input type="date" id="checkout" required/>
+            <input type="text" id="idClienteReserva" placeholder="No. Cédula" required/>
+            <input type="text" id="nombreReserva" placeholder="Nombre" required/>
+            <input type="text" id="apellidoReserva" placeholder="Apellido" required/>
+            <input type="text" id="telefonoReserva" placeholder="Teléfono" required/>
+            <input type="text" id="ciudadReserva" placeholder="Ciudad" required/>
+            <input type="text" id="correoReserva" placeholder="Correo" required/>
+            <input type="text" id="idHabitacionReserva" placeholder="Habitación" required/>
+            <input type="text" id="valorNocheReserva" placeholder="Valor por Noche" required/>
             <button onclick="crearReserva()">Ingresar</button>
         </div>
 
-        <!-- Lista de todas las reservas -->
         <div id="listaReservas" class="lista-reservas hidden">
             <h3>Todas las Reservas</h3>
             <div id="contenedorReservas"></div>
         </div>
-
-        <!-- Botón de regreso -->
-        <div style="margin-top: 20px;">
-        <button onclick="location.href='dashboard.html'">Salir</button>
-        </div>
-        <script src="script/reservas.js" defer></script>
     </div>
+    <div style="margin-top: 20px;">
+        <button onclick="location.href='dashboard.html'">Salir</button>
+    </div>
+    <script src="script/reservas.js" defer></script>
 </body>
 
 </html>

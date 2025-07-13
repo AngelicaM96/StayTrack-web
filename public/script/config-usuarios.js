@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(err => console.error('Error al actualizar:', err));
         } else {
             datos.id_rol = rol === "administrador" ? 1 : 4;
-            datos.id_hotel = 1; // Ajusta según sea necesario
+            datos.id_hotel = 1; 
 
             fetch('/api/usuarios', {
                 method: 'POST',
@@ -84,7 +84,7 @@ function editarUsuario(id, nombre_usuario, usuario, nombre_rol) {
     document.getElementById('usuario').value = usuario;
     document.getElementById('rol').value = nombre_rol.toLowerCase();
 
-    // La contraseña no se puede precargar por seguridad
+    
     document.getElementById('contrasena').value = "";
 
     usuarioEditandoId = id;

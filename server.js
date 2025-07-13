@@ -6,17 +6,17 @@ const app = express();
 const PORT = 3000;
 const path = require('path');
 
-// Middleware
+
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Conexión a la base de datos
+
 const conexion = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '',
+    password: '3312tiamu18',
     database: 'StayTrack' 
 });
 
@@ -25,10 +25,23 @@ conexion.connect((err) => {
     console.error('Error al conectar la base de datos:', err);
     return;
     }
-    console.log('Conexión a MySQL exitosa');
+    console.log('Conexión de MySQL exitosa');
 });
 
-// Ruta para manejar login
+app.locals.conexion = conexion;
+
+const reservasRouter = require('./routes/reservas');
+app.use('/api/reservas', reservasRouter);
+
+const habitacionesRoutes = require('./routes/habitaciones');
+app.use(habitacionesRoutes);
+
+const facturasRouter = require('./routes/facturas');
+app.use(facturasRouter);
+
+
+module.exports = { conexion };
+
 app.post('/login', (req, res) => {
     const { hotel, usuario, contrasena } = req.body;
     console.log("Datos recibidos:", { hotel, usuario, contrasena });
@@ -37,13 +50,13 @@ app.post('/login', (req, res) => {
 
     conexion.query(hotelQuery, [hotel, hotel], (err, hoteles) => {
         if (err) {
-            console.error("Error al buscar hotel:", err);
-            return res.status(500).json({ error: 'Error al buscar hotel' });
+            console.error("Error al buscar el hotel:", err);
+            return res.status(500).json({ error: 'Error al buscar el hotel' });
         }
 
         if (hoteles.length === 0) {
-            console.warn("Hotel no encontrado");
-            return res.status(401).json({ error: 'Hotel no encontrado' });
+            console.warn("No se encontro el Hotel");
+            return res.status(401).json({ error: 'No se encontro el Hotel' });
         }
 
         const idHotel = hoteles[0].Id_hotel;
@@ -58,8 +71,8 @@ app.post('/login', (req, res) => {
             }
 
             if (usuarios.length === 0) {
-                console.warn("Usuario no encontrado en ese hotel");
-                return res.status(401).json({ error: 'Usuario no encontrado en ese hotel' });
+                console.warn("El usuario no corresponde a el Hotel");
+                return res.status(401).json({ error: 'El usuario no corresponde a el Hotel' });
             }
 
             const user = usuarios[0];
@@ -85,7 +98,6 @@ app.post('/login', (req, res) => {
     });
 });
 
-// Registrar un nuevo usuario
 app.post('/api/usuarios', async (req, res) => {
     const { nombre_usuario, usuario, contrasena, id_rol, id_hotel } = req.body;
 
@@ -111,7 +123,6 @@ app.post('/api/usuarios', async (req, res) => {
     }
 });
 
-// Obtener todos los usuarios registrados
 app.get('/api/usuarios', (req, res) => {
     const sql = `
         SELECT U.Id_usuario, U.Nombre_usuario, U.Usuario, R.Nombre_rol
@@ -181,6 +192,7 @@ app.delete('/api/usuarios/:id', (req, res) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`Servidor backend corriendo en http://localhost:${PORT}`);
+app.listen(3000, '0.0.0.0', () => {
+    console.log("Servidor corriendo en http://0.0.0.0:3000");
 });
+
